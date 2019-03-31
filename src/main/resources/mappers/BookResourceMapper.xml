@@ -4,49 +4,42 @@
 
 <mapper namespace="com.titian.dianzishu.mapper.BookResourceMapper">
 
-    <select id="findUserByUserName" resultType="com.titian.familytree.bean.User">
-        select * from user
-        <where>
-            username = #{username}
-        </where>
-    </select>
-
-
     <insert id="insertBookResource" parameterType="com.titian.dianzishu.bean.BookResource">
-        insert into user
+        insert into bookresource
         <trim prefix="(" suffix=")" suffixOverrides=",">
-          <if test="username != null and username != ''">
-              username,
-          </if>
-          <if test="password != null and password !=''">
-              password,
-          </if>
-          <if test="age != null and age !=''">
-              age,
-          </if>
+            <if test="resourcename != null and resourcename != ''">
+                resourcename,
+            </if>
+            <if test="classify != null and classify != ''">
+                classify,
+            </if>
+            <if test="filelink != null and filelink != ''">
+                filelink,
+            </if>
+            <if test="filesize != null and filesize != ''">
+                filesize,
+            </if>
+            <if test="ifpackage != null and ifpackage != ''">
+                ifpackage,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="username != null and username != ''">
-                #{username},
+            <if test="resourcename != null and resourcename != ''">
+                #{resourcename},
             </if>
-            <if test="password != null and password != ''">
-                #{password},
+            <if test="classify != null and classify != ''">
+                #{classify},
             </if>
-            <if test="age != null and age != ''">
-                #{age},
+            <if test="filelink != null and filelink != ''">
+                #{filelink},
+            </if>
+            <if test="filesize != null and filesize != ''">
+                #{filesize},
+            </if>
+            <if test="ifpackage != null and ifpackage != ''">
+                #{ifpackage},
             </if>
         </trim>
     </insert>
-
-    <delete id="deleteUser">
-        delete from user where
-        id = #{id}
-    </delete>
-
-
-    <update id="updateUser">
-        update user
-        set age = #{age} where id=#{id}
-    </update>
 
 </mapper>
