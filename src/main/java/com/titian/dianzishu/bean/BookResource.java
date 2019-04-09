@@ -13,6 +13,7 @@ public class BookResource {
     private String filelink;
     private String filesize;
     private String ifpackage;
+    private String remark;
 
 
 }

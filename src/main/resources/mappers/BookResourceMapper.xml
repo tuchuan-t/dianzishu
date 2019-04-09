@@ -22,6 +22,9 @@
             <if test="ifpackage != null and ifpackage != ''">
                 ifpackage,
             </if>
+            <if test="remark != null and remark != ''">
+                remark,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="resourcename != null and resourcename != ''">
@@ -38,6 +41,9 @@
             </if>
             <if test="ifpackage != null and ifpackage != ''">
                 #{ifpackage},
+            </if>
+            <if test="remark != null and remark != ''">
+                #{remark},
             </if>
         </trim>
     </insert>
