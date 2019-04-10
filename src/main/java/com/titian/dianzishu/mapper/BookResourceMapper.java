@@ -3,6 +3,7 @@ package com.titian.dianzishu.mapper;
 
 import com.titian.dianzishu.bean.BookResource;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.transaction.annotation.Transactional;
 
 @Mapper
 public interface BookResourceMapper {
@@ -12,6 +13,7 @@ public interface BookResourceMapper {
      * @param bookResource
      * @return
      */
+    @Transactional
     public int insertBookResource(BookResource bookResource);
 
 }

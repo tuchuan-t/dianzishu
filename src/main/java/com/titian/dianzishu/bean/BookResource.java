@@ -15,5 +15,13 @@ public class BookResource {
     private String ifpackage;
     private String remark;
 
+    public void cleanBookResource(){
+        resourcename = "";
+        classify = "";
+        filelink ="";
+        filesize ="";
+        ifpackage = "";
+        remark ="";
+    }
 
 }

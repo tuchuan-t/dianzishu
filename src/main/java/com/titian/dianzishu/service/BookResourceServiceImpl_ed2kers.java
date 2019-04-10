@@ -3,6 +3,7 @@ package com.titian.dianzishu.service;
 import com.titian.dianzishu.bean.BookResource;
 import com.titian.dianzishu.mapper.BookResourceMapper;
 import com.titian.dianzishu.pageElements.Ed2kersPage;
+import com.titian.dianzishu.utils.GetDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.springframework.stereotype.Service;
@@ -10,16 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
-@Service
-@Transactional
+@Service("getBookResourceService")
 public class BookResourceServiceImpl_ed2kers implements GetBookResourceService {
 
-    @Resource
-    private WebDriver driverL;
-    @Resource
-    private WebDriver driverD;
-    @Resource
-    private BookResource bookResource;
+    private WebDriver driverL = GetDriver.getChromeDriverOS();
+    private WebDriver driverD = GetDriver.getChromeDriverOS();
+    private BookResource bookResource = new BookResource();
     @Resource
     private BookResourceMapper bookResourceMapper;
 
@@ -29,6 +26,9 @@ public class BookResourceServiceImpl_ed2kers implements GetBookResourceService {
     private int listNum = 0;
     private String nowPage = "";
     private String detailurl = "";
+    private String tmpclassify ="";
+    private String tmpfilelink = "";
+    private int tmpfileNum = 0;
 
 
 
@@ -49,7 +49,7 @@ public class BookResourceServiceImpl_ed2kers implements GetBookResourceService {
                 listNum = driverL.findElements(By.cssSelector(Ed2kersPage.nowBookNum)).size();
 
                 /**采集当前页书目  ed2kers列表中排出第一行不是书目，所以从1开始取**/
-                for (int i = 1; i <= listNum; i++) {
+                for (int i = 2; i <= listNum; i++) {
 
                     /**
                      * 获取详情页url
@@ -64,26 +64,49 @@ public class BookResourceServiceImpl_ed2kers implements GetBookResourceService {
                     /**
                      * 获取详情页内容
                      */
-                    bookResource.setResourcename(driverD.findElement(By.cssSelector(Ed2kersPage.resourcename)).getText());
+                    String tmpRsname = driverD.findElement(By.cssSelector(Ed2kersPage.resourcename)).getText();
+                    bookResource.setResourcename(tmpRsname);
 
                     /** 分类**/
-                    String classify = driverD.findElement(By.cssSelector(Ed2kersPage.classify)).getText();
-                    classify = classify.substring(classify.indexOf("类别:"),classify.indexOf("状态:"));
-                    bookResource.setClassify(classify);
+                    tmpclassify = driverD.findElement(By.cssSelector(Ed2kersPage.classify)).getText();
+                    tmpclassify = tmpclassify.substring(tmpclassify.indexOf("类别:")+3,tmpclassify.indexOf("状态:")-1);
+                    bookResource.setClassify(tmpclassify);
+
+                    /** 文件大小  **/
                     bookResource.setFilesize(driverD.findElement(By.cssSelector(Ed2kersPage.filesize)).getText());
-                    bookResource.setFilelink(driverD.findElement(By.cssSelector(Ed2kersPage.filelink)).getText());
-                    bookResource.setIfpackage(driverD.findElement(By.cssSelector(Ed2kersPage.resourcename)).getText());
-                    bookResource.setRemark("ed2ker--nowPage--num:" + nowPage + "--" + i);
+
+                    /** 资源链接 */
+                    tmpfileNum = driverD.findElements(By.xpath(Ed2kersPage.fileNum)).size();
+                    if (tmpfileNum > 0) {
+                        for (int j = 1; j <= tmpfileNum; j++) {
+                            if(tmpfilelink=="") {
+                                tmpfilelink = driverD.findElement(By.xpath(Ed2kersPage.d_f_fileLink + j + Ed2kersPage.d_b_fileLink)).getAttribute("href");
+                            }else{
+                                tmpfilelink = tmpfilelink + ";" + driverD.findElement(By.xpath(Ed2kersPage.d_f_fileLink + j + Ed2kersPage.d_b_fileLink)).getAttribute("href");
+                            }
+                        }
+                    } else {
+                        continue;
+                    }
+                    bookResource.setFilelink(tmpfilelink);
+                    bookResource.setRemark("ed2ker--nowPage--num:" + nowPage + "--" + (i-1));
                     /**
                      * 存表
                      */
                     bookResourceMapper.insertBookResource(bookResource);
-                    bookResource = null;
+                    tmpfilelink = "";
 
-                    /** 获取当前页并判断是否是最后一页 **/
-                    if (driverL.findElement(By.xpath(Ed2kersPage.nextPage)) == null)
-                        break;
+                    bookResource.cleanBookResource();
+                    Thread.sleep(1000);
                 }
+
+                /** 获取当前页并判断是否是最后一页 **/
+                if (driverL.findElement(By.xpath(Ed2kersPage.nextPage)) == null){
+                    break;
+                }else{
+                    driverL.findElement(By.xpath(Ed2kersPage.nextPage)).click();
+                }
+
             }
 
         }catch (Exception e){

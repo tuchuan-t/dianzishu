@@ -1,7 +1,6 @@
 package com.titian.dianzishu.utils;
 
 
-import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -68,6 +67,12 @@ public class GetDriver {
         return driver;
     }
 
+
+    /** 获取htmlUtil */
+//    public static WebDriver getHtmlUtilDriver(){
+//        driver = new HtmlUnitDriver();
+//        return driver;
+//    }
 //    获取火狐驱动
 
 //    获取IE驱动
